@@ -30,8 +30,21 @@ double calib_bacb(double distance){
 	return distance + (0.06045*pow(distance,0.8756)-3.511);
 }
 
+//	Callback fuction
+static void timer_callback(void* arg)
+{
+}
+
+//	Timer args
+const esp_timer_create_args_t timer_args = {
+	.callback = &timer_callback,
+	.name = "Timer"
+};
+
 void ultrasonic_setup_pins()
 {
+	esp_timer_handle_t timer;
+	ESP_ERROR_CHECK(esp_timer_create(&timer_args,&timer));
     //Config the Trig Pin
     gpio_pad_select_gpio(TRIG_GPIO_NUM);
     gpio_set_direction(TRIG_GPIO_NUM,GPIO_MODE_OUTPUT);

@@ -37,21 +37,7 @@ void task_tx_read_sensor();
 char num_to_char(char num);
 int char_to_num(char c);
 
-//	Callback fuction
-static void timer_callback(void* arg)
-{
-}
-
-//	Timer args
-const esp_timer_create_args_t timer_args = {
-	.callback = &timer_callback,
-	.name = "Timer"
-};
-
 void app_main() {
-	esp_timer_handle_t timer;
-	ESP_ERROR_CHECK(esp_timer_create(&timer_args,&timer));
-
 	pwm_init();
 	adc_init();
 	ultrasonic_setup_pins();
@@ -122,7 +108,7 @@ void task_rx(void *p) {
 void task_tx_read_sensor() {
 	printf("task_tx_read_sensor is running on Core: %d\n",xPortGetCoreID());
 	double distance = 0.0;
-//	double calib_distance = ultrasonic_caliberate_sensor();		//Ghi khoang cach vi tri ban dau
+	double calib_distance = ultrasonic_caliberate_sensor();		//Ghi khoang cach vi tri ban dau
 	for(;;) {
 		char buff[16];	//buff TX
 		//==========================read status motor===========================================================
@@ -172,9 +158,8 @@ void task_tx_read_sensor() {
 
 		//==========================read DIST===========================================================
 		char buff_ultra[8];
-//		distance = ultrasonic_get_distance_in(); //Lay gia tri cam bien
-//		distance  = calib_distance - distance;
-		distance  = 12.34;
+		distance = ultrasonic_get_distance_in(); //Lay gia tri cam bien
+		distance  = calib_distance - distance;
 		snprintf(buff_ultra, sizeof(buff_ultra), "%0.2f", distance);
 
 		size_t len_ultra = strlen(buff_ultra);
